@@ -2,50 +2,56 @@
 #include <stdlib.h>
 #include "io/reader.h"
 
-int countingSort(ArrayList *list, int k) {
-    size_t arraysize = (size_t) (k + 1);
-    int *countArray = calloc(arraysize, sizeof(int));
-    for (int i = 0; i < list->realSize; i++) {
-        if (list->array[i] > k) {
-            free(countArray);
-            printf("Число %d больше максимального\n", list->array[i]);
-            return EXIT_FAILURE;
-        }
-        countArray[list->array[i]]++;
-    }
+int compareInt(const int *firstVar, const int *twoVar) {
+    return *firstVar - *twoVar;
+}
 
-    size_t arrayPos = 0;
-    for (int i = 0; i < arraysize; i++) {
-        for (size_t j = 0; j < countArray[i]; j++) {
-            list->array[arrayPos++] = i;
+void myqsort(int *array, int start, int end, int (*compare)(const int *firstVar, const int *twoVar)) {
+    int i = start;
+    int j = end;
+    int middle = array[(start + end) / 2];
+    int tmp;
+
+    do {
+        while (compare(&array[i], &middle) < 0) i++;
+        while (compare(&array[j], &middle) > 0) j--;
+
+        if (i <= j) {
+            if (compare(&array[i], &array[j]) > 0) {
+                tmp = array[i];
+                array[i] = array[j];
+                array[j] = tmp;
+            }
+            i++;
+            j--;
         }
-    }
-    return EXIT_SUCCESS;
+    } while (i <= j);
+
+    if (i < end)
+        myqsort(array, i, end, compare);
+    if (start < j)
+        myqsort(array, start, j, compare);
 }
 
 int main() {
-    int maxInputDigital = 0;
-    printf("Введите максимальное число в множестве:\n");
-    if (scanf("%d", &maxInputDigital) != 1) {
-        printf("Фигня какая-то... Ты точно все правильно ввел?\n");
-        return EXIT_FAILURE;
-    }
-    getchar();
-
-
     ArrayList list;
     printf("Введите числа:\n");
     if (getIntArray(&list) == EXIT_FAILURE) {
         return EXIT_FAILURE;
     }
-
-    if(countingSort(&list, maxInputDigital) == EXIT_SUCCESS){
-        for(int i = 0; i < list.realSize; i++){
-            printf("%d ", list.array[i]);
-        }
+    printf("Ваши числа:\n");
+    for (int i = 0; i < list.realSize; i++) {
+        printf("%d ", list.array[i]);
     }
-    free(list.array);
+    printf("\n");
 
+    myqsort(list.array, 0, list.realSize - 1, &compareInt);
+
+    for (int i = 0; i < list.realSize; i++) {
+        printf("%d ", list.array[i]);
+    }
+
+    free(list.array);
 
     return EXIT_SUCCESS;
 }

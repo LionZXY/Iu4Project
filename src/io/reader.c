@@ -100,9 +100,3 @@ int getIntArray(ArrayList *outList) {
 
     return EXIT_SUCCESS;
 }
-
-char *copyString(char *str) {
-    char *toReturn = malloc(strlen(str) * sizeof(char) + 1);
-    toReturn = strcpy(toReturn, str);
-    return toReturn;
-}

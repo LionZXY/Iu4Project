@@ -16,8 +16,6 @@ struct ArrayList {
 
 int getIntArray(ArrayList *outList);
 
-char *copyString(char *str);
-
 int getInt(int *out);
 
 #endif //SEMINAR_READER_H
