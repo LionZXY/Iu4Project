@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <memory.h>
 #include "reader.h"
 
 /**
@@ -87,8 +86,9 @@ int getIntArray(ArrayList *outList) {
     list.realSize = 0;
 
     int tmpVar;
+    int status = EXIT_FAILURE;
 
-    while (getInt(&tmpVar) == EXIT_SUCCESS) {
+    while ((status = getInt(&tmpVar)) == EXIT_SUCCESS) {
         list.array[list.realSize++] = tmpVar;
         if (list.realSize == list.bufferSize) {
             list.bufferSize = (int) (list.bufferSize * 1.5);
@@ -96,7 +96,12 @@ int getIntArray(ArrayList *outList) {
         }
     }
 
+    if (status == EOF) {
+        list.array[list.realSize++] = tmpVar;
+    }
+
     *outList = list;
 
     return EXIT_SUCCESS;
 }
+
