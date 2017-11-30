@@ -87,13 +87,18 @@ int getIntArray(ArrayList *outList) {
     list.realSize = 0;
 
     int tmpVar;
+    int status = EXIT_FAILURE;
 
-    while (getInt(&tmpVar) == EXIT_SUCCESS) {
+    while ((status = getInt(&tmpVar)) == EXIT_SUCCESS) {
         list.array[list.realSize++] = tmpVar;
         if (list.realSize == list.bufferSize) {
             list.bufferSize = (int) (list.bufferSize * 1.5);
             list.array = realloc(list.array, (size_t) list.bufferSize);
         }
+    }
+
+    if (status == EOF) {
+        list.array[list.realSize++] = tmpVar;
     }
 
     *outList = list;
